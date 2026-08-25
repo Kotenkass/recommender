@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	DefaultAddr        = ":8080"
 	DefaultLLMModel    = "anthropic/claude-haiku-4.5"
 	DefaultLLMTimeout  = 20 * time.Second
 	DefaultJobTimeout  = 10 * time.Minute
@@ -21,6 +22,7 @@ const (
 
 // Config contains all runtime configuration loaded from environment variables.
 type Config struct {
+	Addr                string
 	RedisURL            string
 	UsersServiceURL     string
 	AnalyticsServiceURL string
@@ -48,6 +50,7 @@ func LoadFromEnv(env []string) (Config, error) {
 	}
 
 	cfg := Config{
+		Addr:                firstNonEmpty(getEnv(values, "ADDR"), DefaultAddr),
 		RedisURL:            getEnv(values, "REDIS_URL"),
 		UsersServiceURL:     getEnv(values, "USERS_SERVICE_URL"),
 		AnalyticsServiceURL: getEnv(values, "ANALYTICS_SERVICE_URL"),

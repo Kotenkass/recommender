@@ -64,7 +64,7 @@ func main() {
 	defer stop()
 
 	httpServer := &http.Server{
-		Addr:              ":8080",
+		Addr:              cfg.Addr,
 		Handler:           routes(logger, redisStore),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       httpServerTimeout,
@@ -74,7 +74,7 @@ func main() {
 
 	serverErr := make(chan error, 1)
 	go func() {
-		logger.WithField("addr", ":8080").Info("http server listening")
+		logger.WithField("addr", cfg.Addr).Info("http server listening")
 		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			serverErr <- err
 			return

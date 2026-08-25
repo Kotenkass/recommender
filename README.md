@@ -21,6 +21,7 @@ Set these environment variables:
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
+| `ADDR` | no | `:8080` | HTTP listen address |
 | `REDIS_URL` | yes | - | Redis connection URL, for example `redis://localhost:6379/0` |
 | `USERS_SERVICE_URL` | yes | - | Users service base URL |
 | `ANALYTICS_SERVICE_URL` | yes | - | Analytics service base URL |
@@ -55,7 +56,7 @@ The service exposes:
 Build and run:
 
 ```bash
-docker build -t recommender .
+docker build -f docker/Dockerfile -t recommender .
 docker run --env-file .env -p 8080:8080 recommender
 ```
 
