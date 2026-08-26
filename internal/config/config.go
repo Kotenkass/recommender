@@ -11,6 +11,7 @@ import (
 
 const (
 	DefaultAddr        = ":8080"
+	DefaultLLMEndpoint = "https://openrouter.ai/api/v1/chat/completions"
 	DefaultLLMModel    = "anthropic/claude-haiku-4.5"
 	DefaultLLMTimeout  = 20 * time.Second
 	DefaultJobTimeout  = 10 * time.Minute
@@ -26,6 +27,7 @@ type Config struct {
 	RedisURL            string
 	UsersServiceURL     string
 	AnalyticsServiceURL string
+	LLMEndpoint         string
 	OpenRouterAPIKey    string
 	LLMModel            string
 	LLMTimeout          time.Duration
@@ -54,6 +56,7 @@ func LoadFromEnv(env []string) (Config, error) {
 		RedisURL:            getEnv(values, "REDIS_URL"),
 		UsersServiceURL:     getEnv(values, "USERS_SERVICE_URL"),
 		AnalyticsServiceURL: getEnv(values, "ANALYTICS_SERVICE_URL"),
+		LLMEndpoint:         firstNonEmpty(getEnv(values, "LLM_ENDPOINT"), DefaultLLMEndpoint),
 		OpenRouterAPIKey:    getEnv(values, "OPENROUTER_API_KEY"),
 		LLMModel:            firstNonEmpty(getEnv(values, "LLM_MODEL"), DefaultLLMModel),
 		LLMTimeout:          DefaultLLMTimeout,

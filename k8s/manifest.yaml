@@ -63,6 +63,11 @@ spec:
                 secretKeyRef:
                   name: recommender-env
                   key: ANALYTICS_SERVICE_URL
+            - name: LLM_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: recommender-env
+                  key: LLM_ENDPOINT
             - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:

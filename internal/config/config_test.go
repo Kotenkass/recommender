@@ -10,6 +10,7 @@ func TestLoadFromEnv(t *testing.T) {
 		"REDIS_URL=redis://localhost:6379/0",
 		"USERS_SERVICE_URL=http://users",
 		"ANALYTICS_SERVICE_URL=http://analytics",
+		"LLM_ENDPOINT=https://example.com/v1/chat/completions",
 		"OPENROUTER_API_KEY=secret",
 		"LLM_MODEL=test-model",
 		"LLM_TIMEOUT=5s",
@@ -24,7 +25,7 @@ func TestLoadFromEnv(t *testing.T) {
 	if cfg.RedisURL != "redis://localhost:6379/0" || cfg.UsersServiceURL != "http://users" || cfg.AnalyticsServiceURL != "http://analytics" {
 		t.Fatalf("unexpected URL config: %#v", cfg)
 	}
-	if cfg.Addr != DefaultAddr || cfg.OpenRouterAPIKey != "secret" || cfg.LLMModel != "test-model" {
+	if cfg.Addr != DefaultAddr || cfg.LLMEndpoint != "https://example.com/v1/chat/completions" || cfg.OpenRouterAPIKey != "secret" || cfg.LLMModel != "test-model" {
 		t.Fatalf("unexpected addr/secret/model config: %#v", cfg)
 	}
 	if cfg.LLMTimeout != 5*time.Second || cfg.JobTimeout != 2*time.Minute || cfg.LLMRPS != 7 || cfg.MaxConcurrency != 3 {
@@ -43,7 +44,7 @@ func TestLoadFromEnvDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadFromEnv: %v", err)
 	}
-	if cfg.LLMModel != DefaultLLMModel || cfg.LLMTimeout != DefaultLLMTimeout || cfg.JobTimeout != DefaultJobTimeout || cfg.LLMRPS != DefaultLLMRPS || cfg.MaxConcurrency != DefaultConcurrency {
+	if cfg.LLMEndpoint != DefaultLLMEndpoint || cfg.LLMModel != DefaultLLMModel || cfg.LLMTimeout != DefaultLLMTimeout || cfg.JobTimeout != DefaultJobTimeout || cfg.LLMRPS != DefaultLLMRPS || cfg.MaxConcurrency != DefaultConcurrency {
 		t.Fatalf("unexpected defaults: %#v", cfg)
 	}
 	if cfg.Addr != DefaultAddr {

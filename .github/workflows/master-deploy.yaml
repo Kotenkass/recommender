@@ -68,15 +68,17 @@ jobs:
 
       - name: Create or update recommender environment Secret
         env:
-          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_URL: ${{ vars.REDIS_URL }}
           USERS_SERVICE_URL: ${{ vars.USERS_SERVICE_URL }}
           ANALYTICS_SERVICE_URL: ${{ vars.ANALYTICS_SERVICE_URL }}
+          LLM_ENDPOINT: ${{ vars.LLM_ENDPOINT }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           kubectl --kubeconfig "$KUBECONFIG" create secret generic recommender-env \
             --from-literal=REDIS_URL="$REDIS_URL" \
             --from-literal=USERS_SERVICE_URL="$USERS_SERVICE_URL" \
             --from-literal=ANALYTICS_SERVICE_URL="$ANALYTICS_SERVICE_URL" \
+            --from-literal=LLM_ENDPOINT="$LLM_ENDPOINT" \
             --from-literal=OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
             --dry-run=client -o yaml | kubectl --kubeconfig "$KUBECONFIG" apply -f -
 

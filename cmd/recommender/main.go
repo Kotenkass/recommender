@@ -45,7 +45,7 @@ func main() {
 	redisStore := redisstore.NewStore(redisClient)
 
 	limiter := rate.NewLimiter(rate.Limit(cfg.LLMRPS), cfg.LLMRPS)
-	llmClient := llm.NewClient(llm.DefaultEndpoint, cfg.OpenRouterAPIKey, cfg.LLMModel, cfg.LLMTimeout, limiter)
+	llmClient := llm.NewClient(cfg.LLMEndpoint, cfg.OpenRouterAPIKey, cfg.LLMModel, cfg.LLMTimeout, limiter)
 
 	service := recommender.NewService(recommender.Config{
 		UsersClient:     users.NewClient(cfg.UsersServiceURL, users.NewHTTPClient(cfg.LLMTimeout)),
