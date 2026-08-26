@@ -82,6 +82,11 @@ spec:
                 secretKeyRef:
                   name: recommender-dev-env
                   key: LLM_ENDPOINT
+            - name: LLM_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: recommender-dev-env
+                  key: LLM_MODEL
             - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -105,13 +110,13 @@ spec:
             failureThreshold: 6
           resources:
             requests:
-              cpu: 25m
-              memory: 32Mi
-              ephemeral-storage: 64Mi
+              cpu: 10m
+              memory: 16Mi
+              ephemeral-storage: 32Mi
             limits:
-              cpu: 300m
-              memory: 128Mi
-              ephemeral-storage: 128Mi
+              cpu: 100m
+              memory: 64Mi
+              ephemeral-storage: 64Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

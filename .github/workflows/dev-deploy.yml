@@ -24,6 +24,7 @@ jobs:
       USERS_SERVICE_URL: ${{ vars.USERS_SERVICE_URL }}
       ANALYTICS_SERVICE_URL: ${{ vars.ANALYTICS_SERVICE_URL }}
       LLM_ENDPOINT: ${{ vars.LLM_ENDPOINT }}
+      LLM_MODEL: ${{ vars.LLM_MODEL }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
     steps:
@@ -70,6 +71,7 @@ jobs:
           USERS_SERVICE_URL: ${{ env.USERS_SERVICE_URL }}
           ANALYTICS_SERVICE_URL: ${{ env.ANALYTICS_SERVICE_URL }}
           LLM_ENDPOINT: ${{ env.LLM_ENDPOINT }}
+          LLM_MODEL: ${{ env.LLM_MODEL }}
           OPENROUTER_API_KEY: ${{ env.OPENROUTER_API_KEY }}
         run: |
           kubectl --kubeconfig "$KUBECONFIG" create secret generic recommender-dev-env \
@@ -78,6 +80,7 @@ jobs:
             --from-literal=USERS_SERVICE_URL="$USERS_SERVICE_URL" \
             --from-literal=ANALYTICS_SERVICE_URL="$ANALYTICS_SERVICE_URL" \
             --from-literal=LLM_ENDPOINT="$LLM_ENDPOINT" \
+            --from-literal=LLM_MODEL="$LLM_MODEL" \
             --from-literal=OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
             --dry-run=client -o yaml | kubectl --kubeconfig "$KUBECONFIG" apply -f -
 
