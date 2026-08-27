@@ -23,8 +23,8 @@ func NewClient(baseURL string, httpClient *http.Client) *Client {
 func (c *Client) Aggregates(ctx context.Context, chatID string, since, until time.Time) (AnalyticsResponse, error) {
 	values := url.Values{}
 	values.Set("chat_id", chatID)
-	values.Set("since", since.Format(time.RFC3339))
-	values.Set("until", until.Format(time.RFC3339))
+	values.Set("since", since.Format("2006-01-02"))
+	values.Set("until", until.Format("2006-01-02"))
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+"/aggregates?"+values.Encode(), nil)
 	if err != nil {
