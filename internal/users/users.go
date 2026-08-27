@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,6 +19,15 @@ type Client struct {
 
 func NewClient(baseURL string, httpClient *http.Client) *Client {
 	return &Client{baseURL: strings.TrimRight(baseURL, "/"), http: httpClient}
+}
+
+// usersListResponse matches the actual response from the users service.
+type usersListResponse struct {
+	Data []userDTO `json:"data"`
+}
+
+type userDTO struct {
+	ChatID int64 `json:"chatID"`
 }
 
 func (c *Client) ActiveChatIDs(ctx context.Context) ([]string, error) {
@@ -35,13 +45,19 @@ func (c *Client) ActiveChatIDs(ctx context.Context) ([]string, error) {
 		return nil, fmt.Errorf("users service returned status %d", resp.StatusCode)
 	}
 
-	var response UsersResponse
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+	var listResp usersListResponse
+	if err := json.NewDecoder(resp.Body).Decode(&listResp); err != nil {
 		return nil, err
 	}
-	return response.ChatIDs, nil
+
+	chatIDs := make([]string, 0, len(listResp.Data))
+	for _, u := range listResp.Data {
+		chatIDs = append(chatIDs, strconv.FormatInt(u.ChatID, 10))
+	}
+	return chatIDs, nil
 }
 
+// UsersResponse and UnmarshalJSON below are kept for backward compatibility.
 type UsersResponse struct {
 	ChatIDs []string `json:"chat_ids"`
 }
