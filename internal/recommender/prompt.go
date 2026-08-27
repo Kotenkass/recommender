@@ -34,9 +34,7 @@ func (b PromptBuilder) Build(since, until time.Time, summary string) string {
 	return fmt.Sprintf(userPromptTemplate, since.Format(time.RFC3339), until.Format(time.RFC3339), summary)
 }
 
+// BuildAnalyticsSummary is kept for backward compatibility.
 func BuildAnalyticsSummary(resp analytics.AnalyticsResponse) string {
-	if resp.Empty() {
-		return "no activity data available"
-	}
 	return resp.SummaryText()
 }

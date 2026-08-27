@@ -239,8 +239,7 @@ func (s *Service) processChat(ctx context.Context, chatID string, since, until t
 		s.metrics.FailedRecommendation()
 		return
 	}
-	summary := BuildAnalyticsSummary(resp)
-	prompt := s.promptBuilder.Build(since, until, summary)
+	prompt := s.promptBuilder.Build(since, until, resp.SummaryText())
 
 	started := time.Now()
 	recommendation, err := s.llm.GenerateRecommendation(ctx, prompt)
