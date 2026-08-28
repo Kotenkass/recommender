@@ -29,9 +29,6 @@ func TestServicePublishesAndCachesRecommendation(t *testing.T) {
 	if len(redisStore.published) != 1 {
 		t.Fatalf("published count = %d, want 1", len(redisStore.published))
 	}
-	if got := redisStore.published[0].chatID; got != "42" {
-		t.Fatalf("published chat_id = %q", got)
-	}
 	if got := redisStore.published[0].text; got != "recommendation" {
 		t.Fatalf("published text = %q", got)
 	}
@@ -268,13 +265,13 @@ func (f *fakeRedis) AcquireProcessingLock(ctx context.Context, chatID string) (b
 		delete(f.locks, chatID)
 	}, nil
 }
-func (f *fakeRedis) PublishRecommendation(ctx context.Context, chatID, text string) error {
+func (f *fakeRedis) PublishRecommendation(ctx context.Context, text string) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	if f.failPublish {
 		return f.publishErr
 	}
-	f.published = append(f.published, published{chatID: chatID, text: text})
+	f.published = append(f.published, published{chatID: "", text: text})
 	return nil
 }
 func (f *fakeRedis) StoreLastRecommendation(ctx context.Context, chatID, text string) error {

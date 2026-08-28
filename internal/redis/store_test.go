@@ -33,7 +33,7 @@ func TestDuplicateCacheHandling(t *testing.T) {
 	if ok, _, err := store.AcquireProcessingLock(context.Background(), "42"); err != nil || ok {
 		t.Fatalf("second lock ok=%v err=%v, want false nil", ok, err)
 	}
-	if err := store.PublishRecommendation(context.Background(), "42", "recommendation"); err != nil {
+	if err := store.PublishRecommendation(context.Background(), "recommendation"); err != nil {
 		t.Fatalf("publish: %v", err)
 	}
 	if err := store.StoreLastRecommendation(context.Background(), "42", "recommendation"); err != nil {
@@ -67,7 +67,7 @@ func TestPublishRecommendationPayload(t *testing.T) {
 	defer pubsub.Close()
 	ch := pubsub.Channel()
 
-	if err := store.PublishRecommendation(context.Background(), "7", "hello world"); err != nil {
+	if err := store.PublishRecommendation(context.Background(), "hello world"); err != nil {
 		t.Fatalf("publish: %v", err)
 	}
 
