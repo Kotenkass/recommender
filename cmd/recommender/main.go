@@ -45,7 +45,7 @@ func main() {
 	redisStore := redisstore.NewStore(redisClient)
 
 	limiter := rate.NewLimiter(rate.Limit(cfg.LLMRPS), cfg.LLMRPS)
-	llmClient := llm.NewClient(llm.DefaultEndpoint, cfg.OpenRouterAPIKey, cfg.LLMModel, cfg.LLMTimeout, limiter)
+	llmClient := llm.NewClient(cfg.LLMEndpoint, cfg.OpenRouterAPIKey, cfg.LLMModel, cfg.LLMTimeout, limiter)
 
 	service := recommender.NewService(recommender.Config{
 		UsersClient:     users.NewClient(cfg.UsersServiceURL, users.NewHTTPClient(cfg.LLMTimeout)),
@@ -64,7 +64,7 @@ func main() {
 	defer stop()
 
 	httpServer := &http.Server{
-		Addr:              ":8080",
+		Addr:              cfg.Addr,
 		Handler:           routes(logger, redisStore),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       httpServerTimeout,
@@ -74,7 +74,7 @@ func main() {
 
 	serverErr := make(chan error, 1)
 	go func() {
-		logger.WithField("addr", ":8080").Info("http server listening")
+		logger.WithField("addr", cfg.Addr).Info("http server listening")
 		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			serverErr <- err
 			return

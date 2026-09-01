@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -23,7 +22,7 @@ type RedisStore interface {
 	Subscribe(ctx context.Context) redispubsub.PubSub
 	CheckLastRecommendation(ctx context.Context, chatID string) (bool, error)
 	AcquireProcessingLock(ctx context.Context, chatID string) (bool, func(), error)
-	PublishRecommendation(ctx context.Context, chatID, text string) error
+	PublishRecommendation(ctx context.Context, text string) error
 	StoreLastRecommendation(ctx context.Context, chatID, text string) error
 	Check(ctx context.Context) error
 	Close() error
@@ -75,13 +74,8 @@ func (s *Store) AcquireProcessingLock(ctx context.Context, chatID string) (bool,
 	return true, release, nil
 }
 
-func (s *Store) PublishRecommendation(ctx context.Context, chatID, text string) error {
-	payload := map[string]string{"chat_id": chatID, "text": text}
-	body, err := json.Marshal(payload)
-	if err != nil {
-		return err
-	}
-	return s.client.Publish(ctx, SendMessageChannel, body).Err()
+func (s *Store) PublishRecommendation(ctx context.Context, text string) error {
+	return s.client.Publish(ctx, SendMessageChannel, text).Err()
 }
 
 func (s *Store) StoreLastRecommendation(ctx context.Context, chatID, text string) error {

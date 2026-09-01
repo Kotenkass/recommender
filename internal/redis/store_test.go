@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -34,7 +33,7 @@ func TestDuplicateCacheHandling(t *testing.T) {
 	if ok, _, err := store.AcquireProcessingLock(context.Background(), "42"); err != nil || ok {
 		t.Fatalf("second lock ok=%v err=%v, want false nil", ok, err)
 	}
-	if err := store.PublishRecommendation(context.Background(), "42", "recommendation"); err != nil {
+	if err := store.PublishRecommendation(context.Background(), "recommendation"); err != nil {
 		t.Fatalf("publish: %v", err)
 	}
 	if err := store.StoreLastRecommendation(context.Background(), "42", "recommendation"); err != nil {
@@ -68,21 +67,17 @@ func TestPublishRecommendationPayload(t *testing.T) {
 	defer pubsub.Close()
 	ch := pubsub.Channel()
 
-	if err := store.PublishRecommendation(context.Background(), "7", "text"); err != nil {
+	if err := store.PublishRecommendation(context.Background(), "hello world"); err != nil {
 		t.Fatalf("publish: %v", err)
 	}
 
 	select {
 	case msg := <-ch:
-		if msg == nil || msg.Channel != "send_message" || msg.Payload == "" {
+		if msg == nil || msg.Channel != "send_message" {
 			t.Fatalf("unexpected message: %#v", msg)
 		}
-		var payload map[string]string
-		if err := json.Unmarshal([]byte(msg.Payload), &payload); err != nil {
-			t.Fatalf("unmarshal payload: %v", err)
-		}
-		if payload["chat_id"] != "7" || payload["text"] != "text" {
-			t.Fatalf("payload = %#v", payload)
+		if msg.Payload != "hello world" {
+			t.Fatalf("payload = %q, want %q", msg.Payload, "hello world")
 		}
 	case <-time.After(time.Second):
 		t.Fatal("timed out waiting for publish message")

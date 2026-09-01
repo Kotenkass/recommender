@@ -34,7 +34,7 @@ type RedisStore interface {
 	Subscribe(ctx context.Context) redispubsub.PubSub
 	CheckLastRecommendation(ctx context.Context, chatID string) (bool, error)
 	AcquireProcessingLock(ctx context.Context, chatID string) (bool, func(), error)
-	PublishRecommendation(ctx context.Context, chatID, text string) error
+	PublishRecommendation(ctx context.Context, text string) error
 	StoreLastRecommendation(ctx context.Context, chatID, text string) error
 	Check(ctx context.Context) error
 	Close() error
@@ -239,8 +239,7 @@ func (s *Service) processChat(ctx context.Context, chatID string, since, until t
 		s.metrics.FailedRecommendation()
 		return
 	}
-	summary := BuildAnalyticsSummary(resp)
-	prompt := s.promptBuilder.Build(since, until, summary)
+	prompt := s.promptBuilder.Build(since, until, resp.SummaryText())
 
 	started := time.Now()
 	recommendation, err := s.llm.GenerateRecommendation(ctx, prompt)
@@ -253,7 +252,7 @@ func (s *Service) processChat(ctx context.Context, chatID string, since, until t
 	}
 	log.WithFields(logrus.Fields{"response_length": len([]rune(recommendation)), "model": s.llmModel, "latency_seconds": latency.Seconds()}).Info("generated recommendation")
 
-	if err := s.redis.PublishRecommendation(ctx, chatID, recommendation); err != nil {
+	if err := s.redis.PublishRecommendation(ctx, recommendation); err != nil {
 		log.WithError(err).Error("failed to publish recommendation")
 		s.metrics.FailedRecommendation()
 		return
