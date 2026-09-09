@@ -40,7 +40,7 @@ spec:
         fsGroup: 65532
       containers:
         - name: recommender
-          image: docker.io/anikolaevdo/recommender:latest
+          image: docker.io/anikolaevdo/recommender:release
           imagePullPolicy: Always
           ports:
             - name: http
